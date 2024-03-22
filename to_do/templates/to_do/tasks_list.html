@@ -2,24 +2,65 @@
 
 {% block title %}لیست کارها{% endblock title %}
 {% block content %}
-<form method="POST">
-    <ul class="list-group">
-    {% for todoitem in todolist %}
+    <div class="list-container">
+        {% if todo_list_len == 0 %}
+            <div>
+                <h3> nothing is here ....</h3>
+                <a href="{% url 'todoapp:todo_list_create' %}"> you can add a job to do from here</a>
+            </div>
+        {% else %}
+            <div class="todo-list-container">
+                <form method="POST" action="{% url 'todoapp:todo_list' %}" id="todo-list-form">
+                    <div class="todo-list">
+                    <ul class="list-group">
+                    {% for todoitem in todolist %}
+                        <li class="list-group-item todo-item">
+                        <div class="todo-item-content">
+                        {% if todoitem.checked %}
+                            <input class="check-input form-check-input job-done-input " checked type="checkbox" name="checked" value="{{ todoitem.id }}" id="firstCheckbox">
+                            <div class="job-done-text job-text">
+                                <h6>{{ todoitem.task }}</h6>
+                                <p>{{ todoitem.date }}</p>
+                            </div>
+                        {% else %}
+                            <input class="check-input form-check-input me-1 " type="checkbox" name="checked" value="{{todoitem.id }}" id="firstCheckbox">
+                            <div class="job-undone-text job-text">
+                                <h6>{{ todoitem.task }}</h6>
+                                <p>{{ todoitem.date }}</p>
+                            </div>
+                        {% endif %}                        <!--<label class="form-check-label" for="firstCheckbox">{{ todoitem.task }}</label> --->
+                        </div>
 
-            <li class="list-group-item">
-            {% if todoitem.checked %}
-                <input class="form-check-input me-1 " checked type="checkbox" name="checked" value="{{ todoitem.id }}" id="firstCheckbox">
-            {% else %}
-                <input class="form-check-input me-1 " type="checkbox" name="checked" value="{{todoitem.id }}" id="firstCheckbox">
-            {% endif %}
-                <label class="form-check-label" for="firstCheckbox">{{ todoitem.task }}</label>
-            </li>
+                        <div class="todo-item-action">
+                            <a class="btn btn-danger" href="{% url 'todoapp:todo_list_delete' todoitem.id %}"><i class="bi bi-trash-fill"></i></a>
+                            <a class="btn btn-secondary" href=""><i class="bi bi-pencil"></i></a>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+                </div>
+                {% csrf_token %}
+                <button class="btn btn-primary" id="printer_paper"><i class="bi bi-printer"></i> </button>
+                <a href="/create" style="border: 1px solid; border-radius: 5px; margin-left: 10px;padding: 8px; position: relative;
+                    top: 2px;" class="link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">create new item</a>
+        </form>
+        </div>
+    {% endif %}
+    </div>
 
-    {% endfor %}
-    </ul>
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">submit</button>
-</form>
+<script>
+ let check_input = document.getElementsByName('checked')
+ let form = document.getElementById('todo-list-form')
+ let print_btn = document.getElementById('print_paper')
 
+ check_input.forEach(element=>{
+     element.addEventListener('click', function (){
+         form.submit()
+     })
+ })
+ print_btn.addEventListener('click', function (){
+     print()
+ })
+</script>
 
 {% endblock content %}

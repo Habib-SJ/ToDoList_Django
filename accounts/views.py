@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
+from django.template.defaulttags import csrf_token
+
 
 def Signup(request):
     if request.method == 'POST':
@@ -14,7 +17,7 @@ def Signup(request):
     form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
-
+@csrf_exempt
 def Login(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
